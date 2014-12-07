@@ -1,5 +1,7 @@
 package skawafuc.edu.uci.ics.students;
 
+import java.io.IOException;
+
 import android.app.Activity;
 import android.content.res.AssetFileDescriptor;
 import android.hardware.Sensor;
@@ -8,6 +10,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +31,7 @@ public class INF_133Activity extends Activity {
 	float[] magnet = null;
 	private MediaPlayer mp;
 	AssetFileDescriptor afd[] = new AssetFileDescriptor[5];
+	int lastPlayedSound = 0;
 	
 	private void updateUI(){
 		
@@ -35,14 +39,33 @@ public class INF_133Activity extends Activity {
 
 			@Override
 			public void run() {
-				mTextViewOrientationLabel.setText("Azimut: " + lastOrientationValue[0]);
+				mTextViewOrientationLabel.setText("Azimuth: " + lastOrientationValue[0]);
 				mTextViewOrientationLabel1.setText("Pitch: " + lastOrientationValue[1]);
 				mTextViewOrientationLabel2.setText("Roll: " + lastOrientationValue[2]);
-				
+				mTextViewSoundLabel.setText("");
 			}});
 	}
 	
+	synchronized void playAudio(AssetFileDescriptor afd){
+		if(mp.isPlaying()){
+			return;
+		}else{
 
+			try {
+				mp.reset();
+				mp.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
+				mp.prepare();
+				mp.start();
+			} catch (IllegalArgumentException e) {
+				Log.d("playAudio:",""+ e + afd.toString());
+			} catch (IllegalStateException e) {
+				Log.d("playAudio:",""+ e + afd.toString());
+			} catch (IOException e) {
+				Log.d("playAudio:",""+ e + afd.toString());
+			}
+
+		}
+	}
 	
 	
 	@Override
@@ -57,6 +80,10 @@ public class INF_133Activity extends Activity {
         
         mp = new MediaPlayer();
         afd[0] = getApplicationContext().getResources().openRawResourceFd(R.raw.a);
+        afd[1] = getApplicationContext().getResources().openRawResourceFd(R.raw.b);
+        afd[2] = getApplicationContext().getResources().openRawResourceFd(R.raw.c);
+        afd[3] = getApplicationContext().getResources().openRawResourceFd(R.raw.d);
+        afd[4] = getApplicationContext().getResources().openRawResourceFd(R.raw.e);
         
         
         mEventListenerMagnetic = new SensorEventListener(){
@@ -89,10 +116,31 @@ public class INF_133Activity extends Activity {
 				      if (success) {
 				        float orientation[] = new float[3];
 				        SensorManager.getOrientation(R, orientation);
-				        lastOrientationValue[0] = orientation[0]; // orientation contains: azimut, pitch and roll
+				        lastOrientationValue[0] = orientation[0]; // orientation contains: azimuth, pitch and roll
 				        lastOrientationValue[1] = orientation[1]; 
 				        lastOrientationValue[2] = orientation[2]; 
 				        updateUI();
+				        if (orientation[2] < 0 &&orientation[2] > -1){
+				        	if (lastPlayedSound != 0)
+				        		playAudio(afd[0]);
+				        	lastPlayedSound = 0;
+				        }else if (orientation[2] < 1 &&orientation[2] > 0){
+				        	if (lastPlayedSound != 1)
+				        		playAudio(afd[1]);
+				        	lastPlayedSound = 1;
+				        }else if (orientation[2] < 2 &&orientation[2] > 1){
+				        	if (lastPlayedSound != 2)
+				        		playAudio(afd[2]);
+				        	lastPlayedSound = 2;
+				        }else if (orientation[2] < 3 &&orientation[2] > 2){
+				        	if (lastPlayedSound != 3)
+				        		playAudio(afd[3]);
+				        	lastPlayedSound = 3;
+				        }else if (orientation[2] < -1 &&orientation[2] > -2){
+				        	if (lastPlayedSound != 4)
+				        		playAudio(afd[4]);
+				        	lastPlayedSound = 4;
+				        }
 				      }
 					
 				}

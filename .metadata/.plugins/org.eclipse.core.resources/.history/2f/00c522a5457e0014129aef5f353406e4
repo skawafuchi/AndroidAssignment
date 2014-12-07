@@ -57,6 +57,6 @@
         android:layout_alignLeft="@+id/editText4"
         android:layout_marginBottom="22dp"
         android:layout_marginLeft="14dp"
-        android:text="Sound played:" />
+        android:text="@string/orientation_label" />
 
 </RelativeLayout>

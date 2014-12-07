@@ -22,8 +22,8 @@ public class INF_133Activity extends Activity {
     private TextView mTextViewOrientationLabel;
 	private TextView mTextViewOrientationLabel1;
 	private TextView mTextViewOrientationLabel2;
+	private TextView mTextSoundLabel;
 	private SensorManager mSensorManager;
-	private SensorEventListener mEventListenerOrientation;
 	private SensorEventListener mEventListenerMagnetic;
 	private SensorEventListener mEventListenerAccelerometer;
 	private float[] lastOrientationValue = new float[3];
@@ -42,7 +42,23 @@ public class INF_133Activity extends Activity {
 				mTextViewOrientationLabel.setText("Azimuth: " + lastOrientationValue[0]);
 				mTextViewOrientationLabel1.setText("Pitch: " + lastOrientationValue[1]);
 				mTextViewOrientationLabel2.setText("Roll: " + lastOrientationValue[2]);
-				
+				switch(lastPlayedSound){
+					case 0:
+						mTextSoundLabel.setText("A!");
+						break;
+					case 1:
+						mTextSoundLabel.setText("B!");
+						break;
+					case 2:
+						mTextSoundLabel.setText("C!");
+						break;
+					case 3:
+						mTextSoundLabel.setText("D!");
+						break;
+					case 4:
+						mTextSoundLabel.setText("E!");
+						break;
+				}
 			}});
 	}
 	
@@ -75,7 +91,7 @@ public class INF_133Activity extends Activity {
         mTextViewOrientationLabel = (TextView) findViewById(R.id.editText1);
         mTextViewOrientationLabel1 = (TextView) findViewById(R.id.editText2);
         mTextViewOrientationLabel2 = (TextView) findViewById(R.id.editText3);
-        
+        mTextSoundLabel = (TextView) findViewById(R.id.editText4);
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         
         mp = new MediaPlayer();
